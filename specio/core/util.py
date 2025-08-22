@@ -8,6 +8,7 @@ import re
 from collections import OrderedDict
 
 import numpy as np
+import pandas as pd
 from six import string_types
 
 
@@ -125,7 +126,6 @@ class Spectrum(object):
         spectra.spc      1487.0      1385.0      1441.0      1504.0      1509.0
 
         """
-        import pandas as pd
         if isinstance(self.meta, tuple):
             index = [meta['filename'] for meta in self.meta]
         else:
@@ -134,20 +134,28 @@ class Spectrum(object):
                             index=index,
                             columns=self.wavelength)
 
-    def to_csv(self, filename):
+    def to_csv(self, filename, transpose=False, sep=","):
         """Export the Spectrum into CSV.
 
         Parameters
         ----------
         filename : str
             File path
+        transpose : bool, optional (default=False)
+            If True, transpose the output so that wavelengths and amplitudes are columns
+            and each row is a measurement.
+        sep : str, optional (default=',')
+            Field delimiter for the output file. Use ';' for semicolon separation.
 
         Returns
         -------
         None
 
         """
-        self.to_dataframe().to_csv(filename)
+        df = self.to_dataframe()
+        if transpose:
+            df = df.T
+        df.to_csv(filename, sep=sep)
 
     def __len__(self):
         if self.amplitudes.ndim == 1:
