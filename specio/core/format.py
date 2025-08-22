@@ -7,7 +7,11 @@
 from __future__ import print_function
 
 import os
-from collections import Iterable
+# Import Iterable with backwards compatibility for Python <3.3
+try:
+    from collections.abc import Iterable  # Python 3.3+
+except ImportError:
+    from collections import Iterable      # Python <3.3
 from warnings import warn
 from six import string_types
 
